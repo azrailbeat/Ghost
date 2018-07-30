@@ -55,8 +55,8 @@ db = {
         options = options || {};
 
         // Export data, otherwise send error 500
-        function exportContent() {
-            return exporter.doExport().then(function (exportedData) {
+        function exportContent(options) {
+            return exporter.doExport({include: options.include}).then(function (exportedData) {
                 return {db: [exportedData]};
             }).catch(function (err) {
                 return Promise.reject(new common.errors.GhostError({err: err}));
@@ -65,6 +65,7 @@ db = {
 
         tasks = [
             localUtils.handlePermissions(docName, 'exportContent'),
+            localUtils.convertOptions(exporter.EXCLUDED_TABLES, null, {forModel: false}),
             exportContent
         ];
 
